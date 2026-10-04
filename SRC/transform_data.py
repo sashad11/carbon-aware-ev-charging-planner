@@ -7,7 +7,6 @@ with open("Data/Raw Data/carbon_intensity.json", "r") as file:
 
 carbon_records = carbon_raw["data"]
 
-print(carbon_records[0])
 
 clean_carbon = []
 
@@ -20,7 +19,6 @@ for record in carbon_records:
         "carbon_index": record["intensity"]["index"]
     })
 
-print(clean_carbon[0])
 
 print("Number of carbon records:", len(clean_carbon))
 
@@ -50,7 +48,6 @@ with open("Data/Raw Data/electricity_prices.json", "r") as file:
 
 price_records = price_raw["results"]
 
-print(price_records[0])
 
 clean_prices = []
 
@@ -60,8 +57,7 @@ for record in price_records:
         "end_time": datetime.fromisoformat(record["valid_to"].replace("Z", "+00:00")),
         "price_p_per_kwh": record["value_inc_vat"]
     })
-
-print(clean_prices[0]) 
+ 
 
 print("Number of price records:", len(clean_prices))
 
@@ -151,5 +147,49 @@ result = con.execute("""
 """).fetchone()
 
 print("Rows in charging table:", result[0])
+
+with open("SQL/create_charging_recommendations.sql", "r") as file:
+    recommendation_sql = file.read()
+
+con.execute(recommendation_sql)
+
+best_periods = con.execute("""
+    SELECT
+        start_time,
+        end_time,
+        price_p_per_kwh,
+        carbon_forecast,
+        price_rank,
+        carbon_rank,
+        charging_score
+    FROM charging_recommendations
+    ORDER BY charging_score ASC
+    LIMIT 5
+""").fetchall()
+
+print("Top 5 recommended charging periods:")
+
+con.execute("""
+    COPY (
+        SELECT
+            start_time,
+            end_time,
+            price_p_per_kwh,
+            carbon_forecast,
+            carbon_index,
+            price_rank,
+            carbon_rank,
+            charging_score
+        FROM charging_recommendations
+        ORDER BY charging_score ASC
+    )
+    TO 'Output/charging_recommendations.csv'
+    (HEADER, DELIMITER ',')
+""")
+
+print("Recommendations saved to Output/charging_recommendations.csv")
+
+for row in best_periods:
+    print(row)
 
 con.close()
