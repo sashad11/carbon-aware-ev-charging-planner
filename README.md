@@ -1,8 +1,20 @@
 # Carbon-Aware EV Fleet Charging Planner
 
+## About me
+
+I recently graduated from Bayes Business School with a First Class degree in Business Management with Finance. During my degree, I became increasingly interested in working with data through modules and projects involving econometrics, big data and Python. I also started learning the basics of SQL independently as I became more interested in working with data.
+
+Most of my previous projects have focused on analysing data and using the results to answer business or financial questions. I chose this project because I wanted to try something different and learn more about how data is collected, cleaned and organised before it can actually be used.
+
+## Why I am applying
+
+I am applying to The Information Lab because I want to continue developing my technical skills while also working in a role where I can solve real business problems. The consulting side of the role particularly interests me because I enjoy understanding a problem, working through it and then explaining the outcome clearly to other people.
+
+The training also stood out to me because I already have experience using Python and have started learning SQL, but there is still a lot I want to learn about data engineering. This project gave me the chance to start exploring that by building a full data pipeline myself rather than only analysing an existing dataset.
+
 ## What I built and who for
 
-I created a tool to help an EV fleet manager in London identify suitable times to charge their electric vehicles.
+I created a tool to help EV fleet managers in London identify suitable times to charge their electric vehicles.
 
 The tool looks at two things: the cost of electricity and the expected carbon intensity of electricity throughout the day. It brings this information together and compares the available 30-minute charging periods.
 
@@ -14,13 +26,15 @@ The final result is a CSV file that shows the charging periods from the most sui
 
 I used two public sources of data:
 
-- **NESO Carbon Intensity data** – provides carbon intensity information for electricity in Great Britain. I used the forecast carbon intensity for each 30-minute period because the aim of the tool is to help plan charging in advance.
+- **NESO Carbon Intensity data** – provides carbon intensity information for electricity in Great Britain. I used the forecast carbon intensity for each 30-minute period because the aim of the tool is to help plan charging in advance. [API documentation](https://api.carbonintensity.org.uk/)
 
-- **Octopus Energy Agile electricity prices** – provides electricity prices for 30-minute periods. I used the London electricity region because the tool is designed for a London-based fleet manager.
+- **Octopus Energy Agile electricity prices** – provides electricity prices for 30-minute periods. I used the London electricity region because the tool is designed for a London-based fleet manager. [API documentation](https://developer.octopus.energy/guides/rest/api-endpoints/)
 
 I chose these two sources because they both provide information in 30-minute periods. This means the electricity price and carbon forecast can be matched for the same charging window.
 
-The original data from both sources is saved as JSON files before any changes are made to it.
+The Octopus Energy API can use pagination when larger amounts of data are requested, but this was not needed for the one-day period used in this project. The data used from both APIs was publicly accessible and did not require me to store any API keys or credentials.
+
+The original responses from both APIs are saved directly as returned before any cleaning or transformation takes place.
 
 ## How it works
 
